@@ -1,0 +1,34 @@
+---
+title: "RPDR Project Notebook"
+output: html_notebook
+author: Kailen Shantz
+---
+
+Last updated: `r {Sys.Date()}`
+
+```{r echo = FALSE}
+#Load required packages
+library(rvest)
+library(tidyverse)
+```
+
+
+In this project, I will be compiling data from all previous season of RuPaul's Drag Race (excluding All Stars edition) in order to try and build a model to predict the winner of a season.
+
+The project is very nascent, so the nature of the modeling task will likely undergo a lot of change through trial-and-error.
+
+For now, the first steps are to write code that will scrape data from the web so that I can build a basic dataset with information about all past contestants and their performance. For this, I'm starting with data from the Wikipedia pages for  each season. Long-term, I'll likely also scrape data from Twitter and Instragram, and perhaps even Google to track how much each contestant is talked about during the run of their season and *how* they are being talked about.
+
+
+Quick note for status of processing the performance data:
+  - Season 3 starts at episode 2, as the 1st episode was the casting extravaganza. So for plotting and/or any time series           analyses, this will need to ne normalized.
+  
+  
+Code for later if I want to create a numeric score encoding performance:
+`performance_data$performance_numeric <- case_when(performance_data$performance == "ELIM" ~ 0, performance_data$performance == "BTM2" ~ 1, performance_data$performance == "LOW" ~ 2,  performance_data$performance == "SAFE" ~ 3, performance_data$performance == "HIGH" ~ 4, performance_data$performance == "WIN" ~ 6)`
+
+
+Note for long-term process: I'll probably want to write a script to update the project with a new season and/or info from new episodes as they air.
+
+
+

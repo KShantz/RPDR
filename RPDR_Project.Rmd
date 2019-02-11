@@ -1,0 +1,184 @@
+---
+title: "Predicting RPDR"
+author: "Kailen Shantz"
+date: "2/2/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+The ultimate goal of this project will be to put together a dataset full of features that will then be used to train a model to predict the winner of a season of RuPaul's drag race.
+
+There will be a lot of commentary and thinking via text as I gradually build the dataset (exploring new tools along the way), and eventually get around to building a model (well, many models. I'll also use this as an opportunity to learn and explore).
+
+There are SO many possible things that could be used as features to predict a winner, but a good starting point is just to construct a simple dataframe with basic information about the competitors. The best place to start here will be Wikipedia, which has useful tables from which data can be extracted.
+
+To do this, I'll use the `rvest` package to scrape data from the tables on the wikipedia pages for each season. I'll do this for one season to start so that we can see what the data look like and figure out what kind of steps will be necessary for cleaning. Then we can loop over all the season to get a complete dataframe.
+
+```{r message=FALSE}
+library(rvest)
+
+# Store  the URL
+#url <- 'https://en.wikipedia.org/wiki/RuPaul%27s_Drag_Race_(season_1)'
+url <- 'https://en.wikipedia.org/wiki/RuPaul%27s_Drag_Race_(season_3)'
+
+# Parse the html of the webpage
+wiki_season1 <- read_html(url)
+
+# Extract tables from the html document using css selectors
+wiki_season1_table_nodes <- html_nodes(wiki_season1, '.wikitable')
+
+# Turn the extracted html tables into dataframes. Note that there are multiple tables on each season's page, and so we will get a list of table
+wiki_season1_tables <- html_table(wiki_season1_table_nodes, fill=T)
+```
+
+This gave us 4 dataframes:
+```{r}
+summary(wiki_season1_tables)
+```
+
+Let's see what kind of data is in each dataframe.
+
+```{r message=FALSE}
+# I'm going to start by importing tidyverse 1) because I'll be using it for data cleaning and 2) because these dataframes will look terrible when printed out unless we convert them to tibbles.
+library(tidyverse)
+
+# This table is useful. We'll want the information here. We can also see, though, that there are footnotes that we'll have to take care of during data cleaning.
+as.tibble(wiki_season1_tables[[1]])
+
+# This table will be helpful for getting information into our dataset about who was in the bottom, who went home, who won the challenge etc. We'll keep it.
+as.tibble(wiki_season1_tables[[2]])
+
+# This table will be printed not as a tibble, as printing as a tibble gives us an error about the fact that we have three columns called 'contestant'. This doesn't really matter, though, as we won't actually need this table.
+wiki_season1_tables[[3]]
+
+# There's a lot of redundant or seemingly unnecessary information in this table for our purposes. It does, however, have the air date, which could be useful for any analyses we may want to do over time, or if we want to look back at historical data from Twitter, Instagram, internet searches etc. This table also contains information about who won the mini challenges. So we'll keep this.
+as.tibble(wiki_season1_tables[[4]])
+```
+
+
+Ok, next I'll make a dataframe with the basic information for each contestant: their name, their age, and whether they won their season.
+```{r}
+# Create the data frame with just the contestant's drag name (column 1), their age (column 3) and their placement (column 5).
+contestant_data <- as.tibble(wiki_season1_tables[[1]][,c(1,3,5)])
+
+# Now we'll change the outcome column so that denotes whether the contestant won their season. This will be what we eventually want  to predict.
+
+# Rename the colunn to reflect what it will encode
+colnames(contestant_data)[3] <- 'was_winner'
+
+contestant_data$was_winner <- as.factor(ifelse(contestant_data$was_winner == "Winner", 1, 0))
+
+# Finally, let's clean this up by converting all column names to lowercase and by removing footnotes.
+
+colnames(contestant_data) <- map(colnames(contestant_data), tolower)
+
+contestant_data$contestant <- str_remove(contestant_data$contestant, "\\[.*\\]")
+```
+
+I'm just going to play around here with the performance data to figure out how to best turn this into a usable dataframe.
+
+```{r}
+# For seasons 1-3, the last episode is the reunion episode, which we don't want. For other season, the final episode is when the winner announced. There are also seasons with reunion episodes intervening between episodes with challenges and the final episode in which the winner is announced. So I want a generalizable way of keeping only the columns in which there are challenges and/or the season winner is announced.
+
+# This is a little challenging due to variation across seasons in when the winner is announced, whether a queen is eliminated etc. So I think a straightforward way to tackle this is to find the columns that contain certain key words.
+
+keywords <- c("WIN", "SAFE", "ELIM", "Winner", "SAFE", "HIGH", "LOW", "BTM2")
+
+#  Next, I'll use str_detect from stringr to find which columns contain any of the values in my keywords list
+
+# Define function to check if column contains values in keywords list
+in_keywords <- function(x){
+  out = x %in% keywords
+  sum(out) > 0
+}
+
+# map over all columns to create logical vectors indicating whether any values in that column are in the keywords list
+contains_keywords <- map_lgl(wiki_season1_tables[[2]], in_keywords)
+
+# Find the indices of columns with values in the keywords list
+indices_to_keep <- c(1,  unname(which(contains_keywords)))
+
+# Create data frame by extracting only the indices of columns containing values in the keywords list, and  the first column, which contains contestant names
+performance_data <- as.tibble(wiki_season1_tables[[2]][indices_to_keep])
+
+colnames(performance_data)[1] <- tolower(colnames(performance_data))[1]
+
+colnames(performance_data) <- map(colnames(performance_data), function(x){str_remove(x, pattern='\\[.*\\]')})
+
+performance_data <- gather(performance_data, key='episode', value='performance', -contestant, convert=T)
+
+performance_data$performance[(performance_data$performance=="")] <- NA
+
+performance_data$performance_numeric <- case_when(performance_data$performance == "ELIM" ~ 0, performance_data$performance == "BTM2" ~ 1, performance_data$performance == "LOW" ~ 2,  performance_data$performance == "SAFE" ~ 3, performance_data$performance == "HIGH" ~ 4, performance_data$performance == "WIN" ~ 6)
+
+
+# I think I might need to do some further pre-processing this this dataframe, but I'm not quite sure... come back to this.
+```
+
+Next, I want  to pull  the information about the original air date for each episode, and who the winners were for the main and mini challenges. This will come frome table 4.
+
+```{r}
+library(lubridate)
+
+challenge_info <- as.tibble(wiki_season1_tables[[4]][c(2,4)])
+
+challenge_info$for_filtering <- challenge_info[1]==challenge_info[2]
+
+# This has a lot of messy information, so I'm going to  approach this by extracting the information I want into separate vectors, and then recombining  into a dataframe.
+
+episodes <- challenge_info %>%
+  select(`No. inseason`)  %>%
+  filter(nchar(`No. inseason`) <= 2)
+
+air_dates <- challenge_info %>%
+  filter(for_filtering == F) %>%
+  select(`Original air date`)
+
+air_dates$`Original air date` <-  str_extract(air_dates$`Original air date`, '[A-Z][a-z]+\\s\\d{1,2},\\s20.{2}')
+  
+air_dates$`Original air date` <- parse_date_time(air_dates$`Original air date`, "b!d!Y!")
+
+challenge_outcomes <- challenge_info %>%
+  filter(for_filtering == T) %>%
+  select(`Original air date`)
+
+colnames(challenge_outcomes) <- "mini_challenge"
+
+challenge_outcomes$mini_challenge <- str_extract(challenge_outcomes$mini_challenge, "Mini-Challenge Winner.*(?=\n)") %>%
+  str_remove("Mini.*:\\s")
+
+#challenge_outcomes$main_challenge <- str_extract(challenge_outcomes$main_challenge, "(?<!Mini-)Challenge Winner.*(?=\n)") %>%
+#  str_remove("Challenge.*:\\s")
+
+challenge_data <- cbind(challenge_outcomes[1], air_dates[1], episodes[1])
+
+challenge_data$`No. inseason` <- as.numeric(challenge_data$`No. inseason`)
+
+test <- left_join(performance_data,  challenge_data, by = c("episode" = "No. inseason"))
+
+for(i in 1:nrow(test)){
+  test$mini_challenge[i] <- ifelse(str_detect(test$mini_challenge[i], test$contestant[i]), 1, 0)
+}
+
+test$n_episodes <- length(unique(test$episode))
+
+# Create a column encoding the number  of episodes (excluding reunions, ru-caps etc) each participant competed in.
+test  %>% group_by(contestant)  %>%  count(is.na(performance)) %>% filter(`is.na(performance)`==FALSE)
+
+performance_metrics <- test  %>% group_by(contestant)  %>% tally(!is.na(performance))
+
+performance_metrics <- test  %>% group_by(contestant, performance) %>% tally() %>% spread(key=performance, value=n, fill = 0) %>% transmute(BTM2 = BTM2 + ELIM, HIGH  = HIGH, LOW = LOW,  SAFE = SAFE, WIN = WIN) %>% left_join(performance_metrics, .)
+
+performance_metrics$n_episodes <- length(unique(test$episode))
+
+colnames(performance_metrics) <-  c("contestant", "n_appearances", "n_lipsync", "n_in_top", "n_in_bottom", "n_safe", "n_wins")
+
+```
+
+Gotta think now about what other processing steps I want to complete before combining datasets from different seasons. I think it would be useful to create columns representing how many episodes are in a season, and maybe what fraction of these episodes each contestant is in. These will be useful later for normalizing measures across seasons, given that there are different numbers of episodes per season. 
+
+
+ggplot(performance_data, aes(x=episode, y = performance_numeric, color = contestant)) + geom_smooth(method="lm", alpha=0.2)
