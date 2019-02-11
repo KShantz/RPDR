@@ -171,7 +171,7 @@ for(i in 1:nrow(performance_data)){
 # Count the number of episodes in each season (note: this will only be episodes meeting the earlier criteria for inclusion,
 # that a challenge occur in that episode). This variable will be used later for normalizing performance metrics across seasons.
 performance_data %<>% group_by(season) %>%
-  mutate(n_episodes = length(unique(episode))).
+  mutate(n_episodes = length(unique(episode)))
 
 # Create a dataframe for summarizing performance of each participant in each season, and add to it a column encoding the number
 # of episodes (excluding reunions, ru-caps etc) each participant competed in.
