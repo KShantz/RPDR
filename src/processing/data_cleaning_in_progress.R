@@ -1,4 +1,5 @@
-# For now, this script will be me playing around with different ways of cleaning the wikipedia data
+# For now, this script will be me playing around with different ways of cleaning the wikipedia data.
+# Given how much code is currently in this script, I may break this up into smaller scripts to handle the individual datasets.
 
 library(gtools)
 library(tidyverse)
@@ -153,30 +154,37 @@ challenge_outcomes$mini_challenge <- str_extract(challenge_outcomes$mini_challen
 
 challenge_data <- bind_cols(episodes, air_dates, challenge_outcomes)
 
+rm(episodes, air_dates, challenge_outcomes)
 
 
 
 
 
+# Add data about performance in the mini-challenges and air dates to the performance dataframe
+performance_data <- left_join(performance_data,  challenge_data, by = c("season", "episode"))
 
-
-test <- left_join(performance_data,  challenge_data, by = c("season", "episode"))
-
-for(i in 1:nrow(test)){
-  test$mini_challenge[i] <- ifelse(str_detect(test$mini_challenge[i], test$contestant[i]), 1, 0)
+# For each participant, indicate whether they won the mini-challenge in a given episode
+for(i in 1:nrow(performance_data)){
+  performance_data$mini_challenge[i] <- ifelse(str_detect(performance_data$mini_challenge[i], performance_data$contestant[i]), 1, 0)
 }
 
+# Count the number of episodes in each season (note: this will only be episodes meeting the earlier criteria for inclusion,
+# that a challenge occur in that episode). This variable will be used later for normalizing performance metrics across seasons.
+performance_data %<>% group_by(season) %>%
+  mutate(n_episodes = length(unique(episode))).
 
-test %<>% group_by(season) %>%
-  mutate(n_episodes = length(unique(episode)))
+# Create a dataframe for summarizing performance of each participant in each season, and add to it a column encoding the number
+# of episodes (excluding reunions, ru-caps etc) each participant competed in.
+performance_metrics <- performance_data  %>% group_by(season, contestant, n_episodes)  %>% tally(!is.na(performance))
 
-# Create a column encoding the number  of episodes (excluding reunions, ru-caps etc) each participant competed in.
-test  %>% group_by(contestant)  %>%  count(is.na(performance)) %>% filter(`is.na(performance)`==FALSE)
+# Count number of times each participant was safe, in the bottom 2, in the bottom or won. Then spread these into separate
+# columns for bottom 2, high, low, safe and win.
+performance_metrics <- performance_data  %>% 
+  group_by(season, contestant, performance) %>% 
+  tally() %>% 
+  spread(key=performance, value=n, fill = 0) %>% 
+  transmute(BTM2 = BTM2 + ELIM, HIGH = HIGH, LOW = LOW, SAFE = SAFE, WIN = WIN) %>% 
+  left_join(performance_metrics, .,  by=c("season", "contestant"))  %>%
+  arrange(as.numeric(season), contestant)
 
-performance_metrics <- test  %>% group_by(contestant)  %>% tally(!is.na(performance))
-
-performance_metrics <- test  %>% group_by(contestant, performance) %>% tally() %>% spread(key=performance, value=n, fill = 0) %>% transmute(BTM2 = BTM2 + ELIM, HIGH  = HIGH, LOW = LOW,  SAFE = SAFE, WIN = WIN) %>% left_join(performance_metrics, .)
-
-performance_metrics$n_episodes <- length(unique(test$episode))
-
-colnames(performance_metrics) <-  c("contestant", "n_appearances", "n_lipsync", "n_in_top", "n_in_bottom", "n_safe", "n_wins")
+colnames(performance_metrics) <-  c("season", "contestant", "n_episodes", "n_appearances", "n_lipsync", "n_in_top", "n_in_bottom", "n_safe", "n_wins")
