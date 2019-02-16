@@ -22,6 +22,9 @@ For now, the first steps are to write code that will scrape data from the web so
 
 Quick note for status of processing the performance data:
   - Season 3 starts at episode 2, as the 1st episode was the casting extravaganza. So for plotting and/or any time series           analyses, this will need to ne normalized.
+  - Next step will be to normalize performance measures by how many episodes in a season and by how many episodes a contestant      appeard in. From there, I think I can start by building a quick and dirty model, and then iterating between modeling and        creating different features to see what, if anything, works well for predicting a season's winner
+  - With respect to features to use in modeling, I think a helpful way to normalize performance across season would be to get 
+    the ranking of each contestant within their season for each feature, and then normalize this by the number of competitors
   
   
 Code for later if I want to create a numeric score encoding performance:

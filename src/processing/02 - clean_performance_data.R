@@ -1,38 +1,10 @@
-# For now, this script will be me playing around with different ways of cleaning the wikipedia data.
-# Given how much code is currently in this script, I may break this up into smaller scripts to handle the individual datasets.
+# This script will import and clean the raw performance and challenge data scraped from Wikipedia. This will be saved
+# to a single, cleaned dataframe summarizing performance for each contestant in each episode in long format.
 
+# Import necessary packages
 library(gtools)
 library(tidyverse)
 library(lubridate)
-
-## Import and clean contestant data
-
-contestant_data_files <- list.files(path = "data/raw", pattern = "contestant_data_s\\d+", full.names = TRUE)
-
-# sort files so that the seasons are imported in the sequential order. This is necessary so that the .id argument in map_dfr
-# can be used to create a column identifying each season
-contestant_data_files <- gtools::mixedsort(contestant_data_files)
-
-contestant_data <- map(contestant_data_files, read_tsv)
-
-contestant_data <- map_dfr(list(contestant_data), function(x){
-  bind_rows(x, .id = "season")
-  })
-
-
-# rename outcome column and modify it to encode whether a contestant won their season.
-colnames(contestant_data)[6] <- 'was_winner'
-
-contestant_data$was_winner <- as.factor(ifelse(contestant_data$was_winner == "Winner", 1, 0))
-
-
-# Convert all column names to lowercase and remove text that reflects footnotes in the original Wikipedia articles
-colnames(contestant_data) <- map(colnames(contestant_data), tolower)
-
-contestant_data <- map_df(contestant_data, function(x){
-  str_remove(x, "\\[.*\\]")
-  })
-
 
 ## Import and clean performance data
 
@@ -96,7 +68,7 @@ performance_data <- map(performance_data, function(x){
 
 performance_data <- map_dfr(list(performance_data), function(x){
   bind_rows(x, .id = "season")
-  })
+})
 
 # remove footnote text
 performance_data$episode <- str_remove(performance_data$episode, pattern = '\\[.*\\]')
@@ -104,7 +76,7 @@ performance_data$episode <- str_remove(performance_data$episode, pattern = '\\[.
 colnames(performance_data) <- map(colnames(performance_data), function(x){str_remove(x, pattern='\\[.*\\]')})
 
 
-## Import and clean challenge data
+## Import and clean challenge data to extract information about air dates and mini-challenge performance
 
 challenge_data_files <- list.files(path = "data/raw", pattern = "challenge_data_s\\d+", full.names = TRUE)
 
@@ -157,9 +129,6 @@ challenge_data <- bind_cols(episodes, air_dates, challenge_outcomes)
 rm(episodes, air_dates, challenge_outcomes)
 
 
-
-
-
 # Add data about performance in the mini-challenges and air dates to the performance dataframe
 performance_data <- left_join(performance_data,  challenge_data, by = c("season", "episode"))
 
@@ -168,23 +137,8 @@ for(i in 1:nrow(performance_data)){
   performance_data$mini_challenge[i] <- ifelse(str_detect(performance_data$mini_challenge[i], performance_data$contestant[i]), 1, 0)
 }
 
-# Count the number of episodes in each season (note: this will only be episodes meeting the earlier criteria for inclusion,
-# that a challenge occur in that episode). This variable will be used later for normalizing performance metrics across seasons.
-performance_data %<>% group_by(season) %>%
-  mutate(n_episodes = length(unique(episode)))
 
-# Create a dataframe for summarizing performance of each participant in each season, and add to it a column encoding the number
-# of episodes (excluding reunions, ru-caps etc) each participant competed in.
-performance_metrics <- performance_data  %>% group_by(season, contestant, n_episodes)  %>% tally(!is.na(performance))
+# save performance data
+write_delim(performance_data, path = "data/processed/performance_data_cleaned.txt", delim = "\t")
 
-# Count number of times each participant was safe, in the bottom 2, in the bottom or won. Then spread these into separate
-# columns for bottom 2, high, low, safe and win.
-performance_metrics <- performance_data  %>% 
-  group_by(season, contestant, performance) %>% 
-  tally() %>% 
-  spread(key=performance, value=n, fill = 0) %>% 
-  transmute(BTM2 = BTM2 + ELIM, HIGH = HIGH, LOW = LOW, SAFE = SAFE, WIN = WIN) %>% 
-  left_join(performance_metrics, .,  by=c("season", "contestant"))  %>%
-  arrange(as.numeric(season), contestant)
-
-colnames(performance_metrics) <-  c("season", "contestant", "n_episodes", "n_appearances", "n_lipsync", "n_in_top", "n_in_bottom", "n_safe", "n_wins")
+rm(challenge_data, performance_data, challenge_data_files, performance_data_files, i,  keywords)
