@@ -1,0 +1,130 @@
+season	contestant	name	age	hometown	was_winner	n_episodes	n_contestants	n_appearances	n_lipsync	n_in_top	n_in_bottom	n_safe	n_wins	mini_challenge_wins
+1	Akashia	Eric Flint	24	Cleveland, Ohio	FALSE	6	9	3	3	0	3	0	0	1
+1	BeBe Zahara Benet	Nea Marshall Kudi Ngwa	28	Minneapolis, Minnesota	TRUE	6	9	6	1	3	1	2	2	0
+1	Jade	David Sotomayor	25	Chicago, Illinois	FALSE	6	9	4	1	0	2	2	0	1
+1	Nina Flowers	Jorge Luis Flores Sanchez	34	Bayamón, Puerto Rico	FALSE	6	9	6	0	5	1	0	1	1
+1	Ongina	Ryan Ong Palao	26	Los Angeles, California	FALSE	6	9	5	1	4	1	0	2	1
+1	Rebecca Glasscock	Javier Rivera	26	Fort Lauderdale, Florida	FALSE	6	9	6	2	2	3	1	1	1
+1	Shannel	Bryan Watkins	29	Las Vegas, Nevada	FALSE	6	9	6	2	2	3	1	0	0
+1	Tammie Brown	Keith Glen Schubert	29	Long Beach, California	FALSE	6	9	2	1	0	1	1	0	0
+1	"Victoria ""Porkchop"" Parker"	Victor Bowling	39	Raleigh, North Carolina	FALSE	6	9	1	1	0	1	0	0	0
+2	Jessica Wild	José David Sierra	29	San Juan, Puerto Rico	FALSE	9	12	7	1	4	1	2	1	0
+2	Jujubee	Airline Inthyrath	25	Boston, Massachusetts	FALSE	9	12	9	3	3	4	2	0	1
+2	Morgan McMichaels	Thomas White	28	Mira Loma, California	FALSE	9	12	5	2	1	2	2	1	0
+2	Mystique Summers Madison	Donte Sims	25	Bedford, Texas	FALSE	9	12	3	1	1	2	0	0	0
+2	Nicole Paige Brooks	Brian Christopher Pryor	36	Atlanta, Georgia	FALSE	9	12	2	1	0	1	1	0	0
+2	Pandora Boxx	Michael Steck	37	Rochester, New York	FALSE	9	12	8	1	4	3	1	0	0
+2	Raven	David Petruschin	30	Riverside, California	FALSE	9	12	9	2	5	2	2	2	3
+2	Sahara Davenport	Antoine Ashley	25	New York, New York	FALSE	9	12	6	3	1	3	2	1	0
+2	Shangela Laquifa Wadley	D.J. Pierce	28	Los Angeles, California	FALSE	9	12	1	1	0	1	0	0	0
+2	Sonique	Kylie Love	26	Atlanta, Georgia	FALSE	9	12	4	1	0	2	2	0	0
+2	Tatianna	Joey Santolini	21	Falls Church, Virginia	FALSE	9	12	9	2	2	3	4	1	1
+2	Tyra Sanchez	James Ross	21	Orlando, Florida	TRUE	9	12	9	0	7	1	1	3	0
+3	Alexis Mateo	Alexis Mateo Pacheco	30	St. Petersburg, Florida	FALSE	12	13	12	3	5	4	3	3	1
+3	Carmen Carrera	Cristopher Roman 	25	Elmwood Park, New Jersey	FALSE	12	13	10	3	1	6	3	0	3
+3	Delta Work	Gabriel Villarreal	34	Norwalk, California	FALSE	12	13	7	3	1	3	3	0	1
+3	India Ferrah	Shane Richardson	23	Dayton, Ohio	FALSE	12	13	4	2	0	2	2	0	0
+3	Manila Luzon	Karl Westerberg	28	New York City, New York	FALSE	12	13	12	1	7	2	3	3	3
+3	Mariah	Elijah Kelly	29	Atlanta, Georgia	FALSE	12	13	5	1	1	3	1	0	1
+3	Mimi Imfurst	Braden Chapman	27	New York City, New York	FALSE	12	13	3	1	2	1	0	0	0
+3	Phoenix	Brian Trapp	29	Atlanta, Georgia	FALSE	12	13	2	1	0	1	1	0	1
+3	Raja	Sutan Amrull	36	Los Angeles, California	TRUE	12	13	12	1	7	2	3	3	2
+3	Shangela	D.J. Pierce	29	Los Angeles, California	FALSE	12	13	10	3	3	4	3	2	1
+3	Stacy Layne Matthews	Ron Jones	25	Back Swamp, North Carolina	FALSE	12	13	6	2	3	2	1	1	1
+3	Venus D-Lite	Adam Guerra	26	Los Angeles, California	FALSE	12	13	1	1	0	1	0	0	0
+3	Yara Sofia	Gabriel Burgos Ortiz	26	Manati, Puerto Rico	FALSE	12	13	12	2	5	3	4	1	1
+4	Alisa Summers	Alex Hernandez	23	Tampa, Florida	FALSE	12	13	1	1	0	1	0	0	0
+4	Chad Michaels	Chad Michaels	40	San Diego, California	FALSE	12	13	12	1	6	2	4	2	0
+4	DiDa Ritz	Xavier Hairson	25	Chicago, Illinois	FALSE	12	13	9	2	0	4	5	0	0
+4	Jiggly Caliente	William Kong	30	Queens, New York	FALSE	12	13	7	3	1	3	3	0	0
+4	Kenya Michaels	Omar Olivera Bonilla	21	Dorado, Puerto Rico	FALSE	12	13	6	2	1	4	1	0	0
+4	Lashauwn Beyond	Jamall Jackson	21	Fort Lauderdale, Florida	FALSE	12	13	2	1	1	1	0	0	0
+4	Latrice Royale	Timothy Wilcots	39	South Beach, Florida	FALSE	12	13	11	3	3	4	4	2	0
+4	Madame LaQueer	Carlos Melendez	29	Carolina, Puerto Rico	FALSE	12	13	4	1	1	2	1	1	0
+4	Milan	Dwayne Cooper	36	New York City, New York	FALSE	12	13	6	3	1	3	2	0	0
+4	Phi Phi O'Hara	Jaremi Carey	25	Chicago, Illinois	FALSE	12	13	12	1	5	3	4	2	0
+4	Sharon Needles	Aaron Coady	29	Pittsburgh, Pennsylvania	TRUE	12	13	12	1	7	2	3	4	0
+4	The Princess	Adam Biga	31	Chicago, Illinois	FALSE	12	13	3	2	1	2	0	0	0
+4	Willam	Willam Belli	29	Los Angeles, California	FALSE	12	13	8	1	3	1	3	1	3
+5	Alaska	Justin Honard	27	Pittsburgh, Pennsylvania	FALSE	12	14	12	0	6	2	4	2	4
+5	Alyssa Edwards	Justin Johnson	32	Mesquite, Texas	FALSE	12	14	9	3	1	4	4	1	2
+5	Coco Montrese	Martin Cooper	37	Las Vegas, Nevada	FALSE	12	14	10	4	1	4	5	1	1
+5	Detox	Matthew Sanderson	27	Los Angeles, California	FALSE	12	14	11	3	2	4	5	1	5
+5	Honey Mahogany	Alpha Mulugeta	29	San Francisco, California	FALSE	12	14	4	1	1	1	2	0	0
+5	Ivy Winters	Dustin Winters	22	Greenville, Michigan	FALSE	12	14	8	1	4	3	1	1	2
+5	Jade Jolie	Josh Green	25	Gainesville, Florida	FALSE	12	14	6	1	0	2	4	0	0
+5	Jinkx Monsoon	Jerick Hoffer	24	Seattle, Washington	TRUE	12	14	12	1	8	1	3	2	1
+5	Lineysha Sparx	Andy Trinidad	24	San Juan, Puerto Rico	FALSE	12	14	5	1	2	1	2	1	1
+5	Monica Beverly Hillz	Juan DeJesus Anaya	27	Owensboro, Kentucky	FALSE	12	14	3	2	0	2	1	0	0
+5	Penny Tration	Tony Cody	39	Cincinnati, Ohio	FALSE	12	14	1	1	0	1	0	0	0
+5	Roxxxy Andrews	Michael Feliciano	28	Orlando, Florida	FALSE	12	14	12	1	7	3	2	2	1
+5	Serena ChaCha	Myron Morgan	21	Tallahassee, Florida	FALSE	12	14	2	2	0	2	0	0	1
+5	Vivienne Pinay	Michael Donehoo	26	New York City, New York	FALSE	12	14	4	1	1	2	1	0	0
+6	Adore Delano	Danny Noriega	23	Azusa, California	FALSE	12	14	11	2	5	4	2	3	2
+6	April Carrión	Jason Carrión	24	Guaynabo, Puerto Rico	FALSE	12	14	3	2	1	2	0	0	0
+6	BenDeLaCreme	Benjamin Putnam	31	Seattle, Washington	FALSE	12	14	10	2	5	3	2	2	3
+6	Bianca Del Rio	Roy Haylock	37	New Orleans, Louisiana	TRUE	12	14	11	0	7	0	4	3	1
+6	Courtney Act	Shane Jenek	31	West Hollywood, California	FALSE	12	14	11	0	3	3	5	2	0
+6	Darienne Lake	Gregory Meyer	41	Rochester, New York	FALSE	12	14	11	4	2	7	2	1	1
+6	Gia Gunn	Scotty Ichikawa	23	Chicago, Illinois	FALSE	12	14	4	1	0	1	3	0	0
+6	Joslyn Fox	Patrick Joslyn	26	Worcester, Massachusetts	FALSE	12	14	9	2	2	5	2	0	1
+6	Kelly Mantle	Kelly Mantle	36	Los Angeles, California	FALSE	12	14	1	1	0	1	0	0	0
+6	Laganja Estranja	Jay Jackson	24	Van Nuys, California	FALSE	12	14	7	2	1	2	4	1	2
+6	Magnolia Crawford	Reynolds Engelhart	28	Seattle, Washington	FALSE	12	14	1	1	0	1	0	0	0
+6	Milk	Dan Donigan	25	New York, New York	FALSE	12	14	5	1	2	2	1	0	1
+6	Trinity K. Bonet	Joshua Jones	22	Atlanta, Georgia	FALSE	12	14	8	3	4	3	1	0	1
+6	Vivacious	Osmond Vacious	40	New York, New York	FALSE	12	14	2	2	0	2	0	0	0
+7	Ginger Minj	Joshua Eads Brown	29	Orlando, Florida	FALSE	12	14	12	2	5	2	5	3	3
+7	Jaidynn Diore Fierce	Christopher Williams	25	Nashville, Tennessee	FALSE	12	14	8	3	2	3	3	0	0
+7	Jasmine Masters	Martell Robinson	37	Los Angeles, California	FALSE	12	14	4	1	0	2	1	0	0
+7	Kandy Ho	Frank Diaz	28	Cayey, Puerto Rico	FALSE	12	14	7	3	0	4	2	0	0
+7	Katya	Brian McCook	32	Boston, Massachusetts	FALSE	12	14	11	2	6	2	3	2	1
+7	Kennedy Davenport	Reuben Asberry Jr.	33	Dallas, Texas	FALSE	12	14	12	3	5	3	4	2	2
+7	Max	Max Malanaphy	22	Hudson, Wisconsin	FALSE	12	14	8	1	2	1	4	2	1
+7	Miss Fame	Kurtis Dam-Mikkelsen	29	New York, New York	FALSE	12	14	9	1	2	5	2	0	0
+7	Mrs. Kasha Davis	Ed Popil	43	Rochester, New York	FALSE	12	14	6	1	2	1	2	0	1
+7	Pearl	Matthew James Lent	23	Brooklyn, New York	FALSE	12	14	12	2	4	3	5	2	0
+7	Sasha Belle	Jared Breakenridge	28	Iowa City, Iowa	FALSE	12	14	3	1	0	2	0	0	0
+7	Tempest DuJour	Patrick Holt	46	Tucson, Arizona	FALSE	12	14	2	1	0	1	0	0	0
+7	Trixie Mattel	Brian Firkus	24	Milwaukee, Wisconsin	FALSE	12	14	7	2	2	2	3	1	2
+7	Violet Chachki	Jason Dardo	22	Atlanta, Georgia	TRUE	12	14	12	0	5	2	5	3	1
+8	Acid Betty	Jamin Ruhren	37	Brooklyn, New York	FALSE	9	12	5	1	3	1	1	0	0
+8	Bob the Drag Queen	Christopher Caldwell	29	New York, New York	TRUE	9	12	9	1	3	1	5	3	0
+8	Chi Chi DeVayne	Zavion Davenport	29	Shreveport, Louisiana	FALSE	9	12	9	3	2	4	3	1	1
+8	Cynthia Lee Fontaine	Carlos Diaz	34	Austin, Texas	FALSE	9	12	3	1	0	1	2	0	0
+8	Dax ExclamationPoint	Dax Martin	31	Savannah, Georgia	FALSE	9	12	2	1	0	1	1	0	0
+8	Derrick Barry	Derrick Barry	32	Las Vegas, Nevada	FALSE	9	12	8	2	3	4	1	1	1
+8	Kim Chi	Sang-Young Shin	27	Chicago, Illinois	FALSE	9	12	9	0	4	1	4	2	0
+8	Laila McQueen	Tyler Devlin	22	Gloucester, Massachusetts	FALSE	9	12	2	2	0	2	0	0	0
+8	Naomi Smalls	Davis Heppenstall	21	Redlands, California	FALSE	9	12	9	1	3	1	5	1	0
+8	Naysha Lopez	Fabian Rodriguez	31	Chicago, Illinois	FALSE	9	12	3	2	0	2	1	0	0
+8	Robbie Turner	Jeremy Baird	33	Seattle, Washington	FALSE	9	12	6	2	1	4	1	1	0
+8	Thorgy Thor	Shane Galligan	31	Brooklyn, New York	FALSE	9	12	7	1	3	1	3	0	0
+9	Aja	Jay Rivera	22	Brooklyn, New York	FALSE	12	14	7	2	1	2	4	0	0
+9	Alexis Michelle	Alex Michaels	32	New York, New York	FALSE	12	14	11	2	3	4	4	1	1
+9	Charlie Hides	Charlie Hides	52	Boston, Massachusetts	FALSE	12	14	4	1	0	2	2	0	0
+9	Cynthia Lee Fontaine	Carlos Diaz	35	Austin, Texas	FALSE	12	14	5	2	0	2	3	0	0
+9	Eureka	David Huggard	25	Johnson City, Tennessee	FALSE	12	14	5	0	1	0	3	0	0
+9	Farrah Moan	Cameron Clayton	23	Las Vegas, Nevada	FALSE	12	14	8	2	1	4	3	0	0
+9	Jaymes Mansfield	James Wirth	26	Milwaukee, Wisconsin	FALSE	12	14	2	1	0	1	1	0	0
+9	Kimora Blac	Von Nguyen	27	Las Vegas, Nevada	FALSE	12	14	3	2	0	2	1	0	0
+9	Nina Bo'nina Brown	Pierre Leverne Dease	34	Riverdale, Georgia	FALSE	12	14	10	3	2	4	4	1	0
+9	Peppermint	Agnes Moore	37	New York, New York	FALSE	12	14	12	2	4	3	5	1	0
+9	Sasha Velour	Alexander Steinberg	29	Brooklyn, New York	TRUE	12	14	12	0	7	1	4	2	1
+9	Shea Couleé	Jaren Merrell	27	Chicago, Illinois	FALSE	12	14	12	1	7	1	4	4	0
+9	Trinity Taylor	Ryan Taylor	31	Orlando, Florida	FALSE	12	14	12	1	5	3	4	3	0
+9	Valentina	James Andrew Leyva	25	Echo Park, California	FALSE	12	14	9	1	4	1	4	1	1
+10	Aquaria	Giovanni Palandrani	21	Brooklyn, New York	TRUE	12	14	12	0	4	2	6	3	2
+10	Asia O'Hara	Antwan Lee	35	Dallas, Texas	FALSE	12	14	12	1	4	3	5	2	4
+10	Blair St. Clair	Andrew Bryson	22	Indianapolis, Indiana	FALSE	12	14	6	1	3	1	2	0	1
+10	Dusty Ray Bottoms	Dustin Rayburn	29	New York City, New York	FALSE	12	14	4	1	0	2	2	0	0
+10	Eureka	David Huggard	27	Johnson City, Tennessee	FALSE	12	14	12	2	6	2	4	2	2
+10	Kalorie Karbdashian Williams	Daniel Hernandez	27	Albuquerque, New Mexico	FALSE	12	14	2	2	0	2	0	0	0
+10	Kameron Michaels	Dane Young	31	Nashville, Tennessee	FALSE	12	14	12	3	4	4	4	1	0
+10	Mayhem Miller	Dequan Johnson	35	Riverside, California	FALSE	12	14	5	2	2	2	1	1	0
+10	Miz Cracker	Maxwell Heller	33	Harlem, New York	FALSE	12	14	11	1	5	3	3	1	0
+10	Monét X Change	Kevin Bertin	27	The Bronx, New York	FALSE	12	14	10	3	5	3	2	0	2
+10	Monique Heart	Kevin Richardson	31	Kansas City, Missouri	FALSE	12	14	7	1	1	2	4	0	1
+10	The Vixen	Anthony Taylor	26	Chicago, Illinois	FALSE	12	14	8	3	1	4	3	1	2
+10	Vanessa Vanjie Mateo	Jose Cancel	25	Tampa, Florida	FALSE	12	14	1	1	0	1	0	0	0
+10	Yuhua Hamasaki	Yuhua Ou	27	New York City, New York	FALSE	12	14	3	1	1	1	1	0	0

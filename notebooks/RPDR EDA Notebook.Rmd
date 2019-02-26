@@ -1,0 +1,349 @@
+---
+title: "Exploratory Data Analysis"
+author: "Kailen Shantz"
+output:
+  html_notebook: default
+  pdf_document: default
+---
+
+Last updated: `r {Sys.Date()}`
+
+
+In this notebook, I'll be exploring the data that has been scraped from the web 
+and cleaned to get a sense of what features might do well at predicting a 
+season's winner, how the data should be modeled, and what types of feature 
+transforms might be useful.
+
+```{r "setup-workspace", message=F, echo=T,  warning=F}
+# load libraries
+library(here)
+library(tidyverse)
+library(forcats)
+library(ggbeeswarm)
+
+# load data
+rpdr <- readr::read_delim(here("data/processed/rpdr_df.txt"), delim = "\t")
+```
+
+To start, we'll take a look at the structure of the data and some summary statistics.
+
+```{r}
+str(rpdr)
+```
+Unsurprisingly, `season` has been read in as a numeric variable. This shouldn't 
+matter, but just to be safe let's change this to a factor. Note that I'm
+choosing a factor instead of a character vector so that the order of seasons 
+will be preserved.
+
+```{r}
+rpdr$season <- forcats::as_factor(as.character(rpdr$season))
+```
+
+
+```{r}
+summary(rpdr)
+```
+Overall, these look like reasonable values, suggesting that nothing has gone
+wrong in the data processing steps. It is notable that the max values for being
+in the top, in the bottom and winning the mini challenges are rather high 
+compared to the means. So let's take a closer look at these.
+
+```{r}
+rpdr$contestant[(rpdr$n_in_top == 8)]
+rpdr$contestant[(rpdr$n_in_bottom == 7)]
+rpdr$contestant[(rpdr$mini_challenge_wins == 5)]
+```
+Looking at the Wikipedia pages for each contestant's season, it appears that
+these data are, in fact correct.
+
+
+# Exploring the raw data
+
+Next, let's get a sense of how the data for each performance metric is
+distributed, and where the winners tend to fall.
+
+```{r}
+ggplot(rpdr, aes(x = n_lipsync, fill = was_winner)) +
+  geom_histogram(binwidth = 1) +
+  theme_bw()
+```
+
+Unsurprisingly, the season winners tended to have fewer lipsyncs, and half of
+the time, the winner never had  to lipsync. No winner has ever had to lipsync
+more than once. So this is likely a helpful  predictor. But it's also far from
+sufficient, given how many non-winners either never had to lipsync, or only
+had one lipsync. 
+
+This also doesn't capture the fact that some people who had to
+lipsync once also went home that very episode. A more useful way to look at this
+data might be to examine times in the bottom vs number of lipsyncs. (later)
+
+```{r}
+ggplot(rpdr, aes(x = n_in_bottom, fill = was_winner)) +
+  geom_histogram(binwidth = 1) +
+  theme_bw()
+```
+
+Again, no surprises here. The winners tended to be in the bottom few times. But
+again, we can also see that this is far from a perfect predictor of the winner.
+
+```{r}
+ggplot(rpdr, aes(x = n_safe, fill = was_winner)) +
+  geom_histogram(binwidth = 1) +
+  theme_bw()
+```
+
+This looks like a less informative predictor. The distribution appears to be
+relatively uniform. The winners are spread across all possible values for the 
+number of time safe except 0. So  minimnally, we can say that all winners have 
+been safe at least once.
+
+```{r}
+ggplot(rpdr, aes(x = n_in_top, fill = was_winner)) +
+  geom_histogram(binwidth = 1) +
+  theme_bw() +
+  scale_x_continuous(breaks = c(0, 2, 4, 6, 8))
+```
+
+Nothing here should be particularly surprising. Season winners tended to be in
+the top a fair number of times, and have thus far never been in the top fewer
+than 3 times.
+
+
+```{r}
+ggplot(rpdr, aes(x = n_wins, fill = was_winner)) +
+  geom_histogram(binwidth = 1) +
+  theme_bw()
+```
+
+Just like we saw for times in the top, season winners fall on the right tail
+of this distribution, always having multiple wins.
+
+It's worth considering that using count data might be a little misleading. On
+the one hand, the winners tend to cluster together in the histograms, but we
+did observe some separation for the winners when it came to how often they
+were in the top. One potential problem is that there are a different number of
+episodes and different numbers of competitors across seasons. And using pure
+count data doesn't take that variation into account. So for starters, let's take
+a look at how these distributions vary across seasons.
+
+```{r, fig.height=7, fig.width=2, fig.asp=0.9}
+ggplot(rpdr, aes(x = n_lipsync, fill = was_winner)) +
+  geom_histogram(binwidth = 1) +
+  facet_grid(season~.) +
+  theme_bw() +
+  theme(axis.text.y = element_text(size = 5))
+```
+
+These distributions actually look quite comparable across seasons. We can see,
+now, that the winner was not always the person with the fewest lipsyncs. But,
+again, this is a limitation of using count data. It doesn't capture facts like 
+how a contestant can lipsync once and then be sent home that same episode.
+
+```{r, fig.height=7, fig.width=2, fig.asp=0.9}
+ggplot(rpdr, aes(x = n_in_bottom, fill = was_winner)) +
+  geom_histogram(binwidth = 1) +
+  facet_grid(season~.) +
+  theme_bw() +
+  theme(axis.text.y = element_text(size = 5))
+```
+
+For the most part, the data are similar across seasons. Times in the bottom
+tend to be between 1 and 4. Seson 1 has a tighter spread, likely because it had
+fewer contestants. Seasons 6 and 7 stand out a bit with more apparent right
+skews in the data.
+
+```{r, fig.height=7, fig.width=2, fig.asp=0.9}
+ggplot(rpdr, aes(x = n_safe, fill = was_winner)) +
+  geom_histogram(binwidth = 1) +
+  facet_grid(season~.) +
+  theme_bw() +
+  theme(axis.text.y = element_text(size = 5))
+```
+
+For the most part, these data look consistent with what we saw in the aggregated
+data: there is a relitively uniform distribution in each seasons. One thing that
+does stand out is that as we go from earlier to later seasons, the number of
+times the winner is safe has increased.
+
+```{r, fig.height=7, fig.width=2, fig.asp=0.9}
+ggplot(rpdr, aes(x = n_in_top, fill = was_winner)) +
+  geom_histogram(binwidth = 1) +
+  facet_grid(season~.) +
+  theme_bw() +
+  theme(axis.text.y = element_text(size = 5)) + 
+  scale_x_continuous(breaks = c(0, 2, 4, 6, 8))
+```
+
+Here we can see that while there is variation across seasons, for the most part,
+the winner tends to be consistently in the top.
+
+```{r, fig.height=7, fig.width=2, fig.asp=0.9}
+ggplot(rpdr, aes(x = n_wins, fill = was_winner)) +
+  geom_histogram(binwidth = 1) +
+  facet_grid(season~.) +
+  theme_bw() +
+  theme(axis.text.y = element_text(size = 5)) + 
+  scale_x_continuous(breaks = c(0, 2, 4, 6, 8))
+```
+
+These plot reveals more to us than the aggregate plot. Here we can very cleary
+see that, with the exception of season 9, the winner consistently has either
+the most wins, or is tied with one or two other contestants for the most wins.
+
+Now that we've got a sense of what the data look like, let's take a deeper look
+at each season to see how the competitors stack up against one another. To do
+this, I'll be plotting stacked barcharts for how often each participant in a
+season lipsynced, was in the bottom, was safe, was in the top and won.
+
+Note that times in the bottom includes the times that a participant had to 
+lispync. So, for example the first person to get sent home would be in the 
+bottom the same number of times that they lipsynced.
+
+Similarly, times in the top includes wins. So if a participant was in the top
+the same number of times that they won, this means that they won every time they
+were in the top.
+
+```{r}
+rpdr %>% gather(key = "performance", value = "count", n_lipsync:n_wins) %>%
+  filter(season == 1) %>%
+  ggplot(aes(x = reorder(contestant, n_appearances), y = count, fill = fct_relevel(performance, "n_lipsync", "n_in_bottom", "n_safe", "n_in_top", "n_wins"))) +
+  geom_col(alpha = 0.7) + 
+  coord_flip() + 
+  labs(y = "Count", fill  = "Performance", x = "Contestants", title = "Season 1") +
+  theme_bw() + scale_y_continuous(breaks = c(0, 2, 4, 6, 8, 10, 12, 14, 16, 18), expand = c(0,0))
+```
+
+```{r}
+rpdr %>% gather(key = "performance", value = "count", n_lipsync:n_wins) %>%
+  filter(season == 2) %>%
+  ggplot(aes(x = reorder(contestant, n_appearances), y = count, fill = fct_relevel(performance, "n_lipsync", "n_in_bottom", "n_safe", "n_in_top", "n_wins"))) +
+  geom_col(alpha = 0.7) + 
+  coord_flip() + 
+  labs(y = "Count", fill  = "Performance", x = "Contestants", title = "Season  2") +
+  theme_bw() + scale_y_continuous(breaks = c(0, 2, 4, 6, 8, 10, 12, 14, 16, 18), expand = c(0,0))
+```
+
+```{r}
+rpdr %>% gather(key = "performance", value = "count", n_lipsync:n_wins) %>%
+  filter(season == 3) %>%
+  ggplot(aes(x = reorder(contestant, n_appearances), y = count, fill = fct_relevel(performance, "n_lipsync", "n_in_bottom", "n_safe", "n_in_top", "n_wins"))) +
+  geom_col(alpha = 0.7) + 
+  coord_flip() + 
+  labs(y = "Count", fill  = "Performance", x = "Contestants", title = "Season  3") +
+  theme_bw() + scale_y_continuous(breaks = c(0, 2, 4, 6, 8, 10, 12, 14, 16, 18), expand = c(0,0))
+```
+
+This graph is great because it highlights a point where any model fit to these
+data will fail. Manila's and Raja's performance was identical, so the best we
+can accomplish with our current measures is a model that predicts they will have
+an equally likely chance of winning season 3. In other words, the performance
+data may not be enough to fit a successful model. That said, we haven't looked
+at the mini-challenge data, yet.
+
+```{r}
+rpdr %>% gather(key = "performance", value = "count", n_lipsync:n_wins) %>%
+  filter(season == 4) %>%
+  ggplot(aes(x = reorder(contestant, n_appearances), y = count, fill = fct_relevel(performance, "n_lipsync", "n_in_bottom", "n_safe", "n_in_top", "n_wins"))) +
+  geom_col(alpha = 0.7) + 
+  coord_flip() + 
+  labs(y = "Count", fill  = "Performance", x = "Contestants", title = "Season 4") +
+  theme_bw() + scale_y_continuous(breaks = c(0, 2, 4, 6, 8, 10, 12, 14, 16, 18), expand = c(0,0))
+```
+
+```{r}
+rpdr %>% gather(key = "performance", value = "count", n_lipsync:n_wins) %>%
+  filter(season == 5) %>%
+  ggplot(aes(x = reorder(contestant, n_appearances), y = count, fill = fct_relevel(performance, "n_lipsync", "n_in_bottom", "n_safe", "n_in_top", "n_wins"))) +
+  geom_col(alpha = 0.7) + 
+  coord_flip() + 
+  labs(y = "Count", fill  = "Performance", x = "Contestants", title = "Season 5") +
+  theme_bw() + scale_y_continuous(breaks = c(0, 2, 4, 6, 8, 10, 12, 14, 16, 18), expand = c(0,0))
+```
+
+```{r}
+rpdr %>% gather(key = "performance", value = "count", n_lipsync:n_wins) %>%
+  filter(season == 6) %>%
+  ggplot(aes(x = reorder(contestant, n_appearances), y = count, fill = fct_relevel(performance, "n_lipsync", "n_in_bottom", "n_safe", "n_in_top", "n_wins"))) +
+  geom_col(alpha = 0.7) + 
+  coord_flip() + 
+  labs(y = "Count", fill  = "Performance", x = "Contestants", title = "Season 6") +
+  theme_bw() + scale_y_continuous(breaks = c(0, 2, 4, 6, 8, 10, 12, 14, 16, 18), expand = c(0,0))
+```
+
+```{r}
+rpdr %>% gather(key = "performance", value = "count", n_lipsync:n_wins) %>%
+  filter(season == 7) %>%
+  ggplot(aes(x = reorder(contestant, n_appearances), y = count, fill = fct_relevel(performance, "n_lipsync", "n_in_bottom", "n_safe", "n_in_top", "n_wins"))) +
+  geom_col(alpha = 0.7) + 
+  coord_flip() + 
+  labs(y = "Count", fill  = "Performance", x = "Contestants", title = "Season 7") +
+  theme_bw() + scale_y_continuous(breaks = c(0, 2, 4, 6, 8, 10, 12, 14, 16, 18), expand = c(0,0))
+```
+
+```{r}
+rpdr %>% gather(key = "performance", value = "count", n_lipsync:n_wins) %>%
+  filter(season == 8) %>%
+  ggplot(aes(x = reorder(contestant, n_appearances), y = count, fill = fct_relevel(performance, "n_lipsync", "n_in_bottom", "n_safe", "n_in_top", "n_wins"))) +
+  geom_col(alpha = 0.7) + 
+  coord_flip() + 
+  labs(y = "Count", fill  = "Performance", x = "Contestants", title = "Season 8") +
+  theme_bw() + scale_y_continuous(breaks = c(0, 2, 4, 6, 8, 10, 12, 14, 16, 18), expand = c(0,0))
+```
+
+```{r}
+rpdr %>% gather(key = "performance", value = "count", n_lipsync:n_wins) %>%
+  filter(season == 9) %>%
+  ggplot(aes(x = reorder(contestant, n_appearances), y = count, fill = fct_relevel(performance, "n_lipsync", "n_in_bottom", "n_safe", "n_in_top", "n_wins"))) +
+  geom_col(alpha = 0.7) + 
+  coord_flip() + 
+  labs(y = "Count", fill  = "Performance", x = "Contestants", title = "Season 9") +
+  theme_bw() + scale_y_continuous(breaks = c(0, 2, 4, 6, 8, 10, 12, 14, 16, 18), expand = c(0,0))
+```
+
+```{r}
+rpdr %>% gather(key = "performance", value = "count", n_lipsync:n_wins) %>%
+  filter(season == 10) %>%
+  ggplot(aes(x = reorder(contestant, n_appearances), y = count, fill = fct_relevel(performance, "n_lipsync", "n_in_bottom", "n_safe", "n_in_top", "n_wins"))) +
+  geom_col(alpha = 0.7) + 
+  coord_flip() + 
+  labs(y = "Count", fill  = "Performance", x = "Contestants", title = "Season 10") +
+  theme_bw() + scale_y_continuous(breaks = c(0, 2, 4, 6, 8, 10, 12, 14, 16, 18), expand = c(0,0)) 
+```
+
+Looking across all of these graphs, a couple things stand out to me that are
+worth exploring:
+
+- 9/10 winners had or were tied for the most wins
+- 5/10 winners never had to lipsync
+- Of the winners who did not have the most wins, 3/6 never had to lipsync
+
+This suggests to me that we could build a reasonably naive model based on wins
+and lipsync data alone. So let's explore that quickly.
+
+```{r}
+rpdr.2 <- rpdr %>%
+  group_by(season) %>%
+  mutate(most_wins = ifelse(n_wins == max(n_wins), TRUE, FALSE),
+  never_lipsynced = ifelse(n_lipsync == 0, TRUE, FALSE))
+```
+
+```{r}
+model_nB <-naiveBayes(was_winner ~ most_wins + never_lipsynced, data = rpdr.2)
+rpdr.2$prediction <- predict(model_nB, newdata = rpdr.2, type = "raw")
+
+group_by(rpdr.2, season) %>%
+  mutate(minval = min(prediction)) %>%
+  filter(prediction == minval) %>%
+  select(contestant)
+```
+
+
+
+```{r}
+ggplot(rpdr, aes(x = n_lipsync, y = n_in_bottom, color = was_winner)) + 
+  geom_point(position = position_jitter(w = 0.3, h = 0.3), alpha = 0.8) + 
+  geom_hline(yintercept = 2, linetype = 2) +
+  geom_vline(xintercept = 1, linetype = 2) +
+  theme_bw()
+```
